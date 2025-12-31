@@ -19,9 +19,10 @@ authors = [
 
 dependencies = [
     "langchain>=0.3.81",
+    "langchain-ollama>=1.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=14.0",
+    "ruff>=0.14.0",
 ]

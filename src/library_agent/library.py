@@ -35,7 +35,7 @@ class Library:
     def __init__(self):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    def list_books(self):
+    def list_books(self) -> list[str]:
         return [book.name for book in self.book_urls]
 
     @overload
