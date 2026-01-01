@@ -86,7 +86,6 @@ class Library:
         key = (book_name, regex)
         if key not in self.searches_cache:
             self.searches_cache[key] = []
-            breakpoint()
             for match in re.finditer(regex, book_content):
                 context_start = max(0, match.start() - context_size)
                 context_end = min(

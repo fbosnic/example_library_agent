@@ -8,8 +8,17 @@ from langchain_ollama import ChatOllama
 SYSTEM_PROMPT = """
 You are a helpful library assistant that can provide information on books.
 At your disposal you have various tools that you should use to answer
-the questions. Do not make up answers or informations that
+the questions.
 
+## Notes
+- Do not make up information. Instead, find the way to answer
+    the question by using tools at your disposal.
+- If you, eventually, after using your tools, find out
+    that you can not answer the question, say that you do not
+    know the answer.
+- Start by making a plan on how to use the tools at
+    your disposal to answer the question. Then execute the
+    plan by calling the tools and produce an answer to the user.
 """
 
 
@@ -39,15 +48,21 @@ def main():
             to get the next page of results.
         - Make sure that the name of the book is correctly spelled.
             Otherwise, the toll will return an error.
+        - Many book have slightly different versions of their name.
+            Make sure to check the exact names of books in the
+            library before calling tools that rely on the name of the
+            book.
+        - Try to answer the question without asking any the user
+            for additional information or confirmation.
 
         ## Example
         Suppose that the user would like to know what color the hair
         of Harry Potter is:
         1) First, check whether Harry Potter books are in the library
-        2) Use this tool to search for "Harry Potter" in any of these
-        books and get books snippets
+        2) Use this tool (function call) to search for "Harry Potter" in any
+        of these books and get books snippets
         3) Check the snippets for the hair color.
-
+        4) Answer what the hair color is.
         """
         try:
             search_results = library.paginated_regex_search(
@@ -60,26 +75,21 @@ def main():
             return f"Error: {ex}"
 
     llm = ChatOllama(
-        model="llama3.3",
+        model="llama3.1:8b",
         temperature=0.1,
         base_url="http://192.168.88.15:11434",
         tools=[library.list_books],
     )
     agent = create_agent(
         model=llm,
-        system_prompt=(
-            "You are a helpful library assistant that can provide information on books."
-            " At your disposal you have various different tools that you can use to find"
-            " the information you need for answering questions."
-            " Do not make up information that you can not find using your tools."
-            " If you are not sure about the answer, say that you do not know."
-        ),
+        system_prompt=SYSTEM_PROMPT,
         tools=[list_books, regex_search_book_paginated],
     )
 
     context = agent.invoke(
         {
             "messages": [
+                # {"role": "user", "content": "List the books in the library."}
                 {"role": "user", "content": "Can you describe captain Ahab?"}
             ]
         },
