@@ -18,9 +18,46 @@ def main():
 
     @tool
     def list_books():
-        "Lists all available books"
+        """Lists books abailable in the library.
+
+        Use this tool to find the exact name of the books in the library.
+        """
         return library.list_books()
 
+    @tool
+    def regex_search_book_paginated(
+        book_name: str,
+        regex: str,
+        page_idx: int = 0,
+    ) -> list[str]:
+        """Searches for matches for a given regex in a book.
+
+        ## Notes
+        - This is a great tool to find information within a book.
+            This function will always return a page of 10 results. If you
+            want to see more results, you can use the page_idx parameter
+            to get the next page of results.
+        - Make sure that the name of the book is correctly spelled.
+            Otherwise, the toll will return an error.
+
+        ## Example
+        Suppose that the user would like to know what color the hair
+        of Harry Potter is:
+        1) First, check whether Harry Potter books are in the library
+        2) Use this tool to search for "Harry Potter" in any of these
+        books and get books snippets
+        3) Check the snippets for the hair color.
+
+        """
+        try:
+            search_results = library.paginated_regex_search(
+                book_name,
+                regex,
+                page_idx=page_idx
+            )
+            return [match.context for match in search_results.matches]
+        except ValueError as ex:
+            return f"Error: {ex}"
 
     llm = ChatOllama(
         model="llama3.3",
@@ -37,15 +74,16 @@ def main():
             " Do not make up information that you can not find using your tools."
             " If you are not sure about the answer, say that you do not know."
         ),
-        tools=[list_books],
+        tools=[list_books, regex_search_book_paginated],
     )
 
     context = agent.invoke(
         {
             "messages": [
-                {"role": "user", "content": "what books do you have?"}
+                {"role": "user", "content": "Can you describe captain Ahab?"}
             ]
         },
+        print_mode="messages",
     )
 
     for msg in context["messages"]:
