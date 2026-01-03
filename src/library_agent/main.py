@@ -3,6 +3,13 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import AIMessage
 from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+import dotenv
+import os
+
+
+dotenv.load_dotenv()
 
 
 SYSTEM_PROMPT = """
@@ -27,6 +34,8 @@ When answering, follow these steps:
 
 
 def main():
+    google_api_key = os.environ["GEMINI_API_KEY"]
+
     library = Library()
 
     @tool
@@ -73,6 +82,12 @@ def main():
         except ValueError as ex:
             return f"Error: {ex}"
 
+    gemini_llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        google_api_key=google_api_key,
+        google_project_id="gen-lang-client-0677234139",
+    )
+
     llm = ChatOllama(
         model="llama3.1:8b",
         temperature=0.1,
@@ -80,7 +95,7 @@ def main():
         tools=[library.list_books],
     )
     agent = create_agent(
-        model=llm,
+        model=gemini_llm,
         system_prompt=SYSTEM_PROMPT,
         tools=[list_books, regex_search_book_paginated],
     )
@@ -97,6 +112,10 @@ def main():
 
     for msg in context["messages"]:
         if isinstance(msg, AIMessage):
+            if isinstance(msg.content, list):
+                print(msg.content[0]["text"])
+                for followup in msg.content[1:]:
+                    print(followup)
             print(msg.content)
 
 

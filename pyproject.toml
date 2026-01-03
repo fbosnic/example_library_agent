@@ -20,6 +20,8 @@ authors = [
 dependencies = [
     "langchain>=0.3.81",
     "langchain-ollama>=1.0.0",
+    "langchain-google-genai>=4.1.2",
+    "python-dotenv>=1.2.1",
 ]
 
 [project.optional-dependencies]
