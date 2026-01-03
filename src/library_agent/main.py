@@ -10,15 +10,19 @@ You are a helpful library assistant that can provide information on books.
 At your disposal you have various tools that you should use to answer
 the questions.
 
+## Answering questions and requests
+When answering, follow these steps:
+1) Start by making a plan on how you will find the requested information.
+2) Write this plan out so that the user can see your thought process.
+3) Execute the plan (no need to wait for the confirmation from the user)
+    by calling the tools and produce an answer to the user.
+
 ## Notes
 - Do not make up information. Instead, find the way to answer
     the question by using tools at your disposal.
 - If you, eventually, after using your tools, find out
     that you can not answer the question, say that you do not
     know the answer.
-- Start by making a plan on how to use the tools at
-    your disposal to answer the question. Then execute the
-    plan by calling the tools and produce an answer to the user.
 """
 
 
@@ -43,23 +47,18 @@ def main():
 
         ## Notes
         - This is a great tool to find information within a book.
-            This function will always return a page of 10 results. If you
-            want to see more results, you can use the page_idx parameter
-            to get the next page of results.
+            This function will always return a page of 10 sequential
+            search results. Change the page_idx to get different pages.
         - Make sure that the name of the book is correctly spelled.
-            Otherwise, the toll will return an error.
-        - Many book have slightly different versions of their name.
-            Make sure to check the exact names of books in the
-            library before calling tools that rely on the name of the
-            book.
-        - Try to answer the question without asking any the user
-            for additional information or confirmation.
+            by calling the list_books tool first.
+            The tool will respond with an error message
+            if the book is not found.
 
         ## Example
         Suppose that the user would like to know what color the hair
         of Harry Potter is:
         1) First, check whether Harry Potter books are in the library
-        2) Use this tool (function call) to search for "Harry Potter" in any
+        2) Use this tool to search for "Harry Potter" in any
         of these books and get books snippets
         3) Check the snippets for the hair color.
         4) Answer what the hair color is.
