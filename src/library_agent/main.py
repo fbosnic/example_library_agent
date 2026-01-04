@@ -112,11 +112,7 @@ def main():
 
     for msg in context["messages"]:
         if isinstance(msg, AIMessage):
-            if isinstance(msg.content, list):
-                print(msg.content[0]["text"])
-                for followup in msg.content[1:]:
-                    print(followup)
-            print(msg.content)
+            print(msg.text, end="")
 
 
 if __name__ == "__main__":
