@@ -1,2 +1,5 @@
 src/library_agent/books_cache
 **/*.pyc
+.venv
+.env
+tmp
